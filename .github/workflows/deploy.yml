@@ -1,0 +1,47 @@
+name: Сборка и публикация Jupyter Book
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    
+    steps:
+    - name: Checkout репозитория
+      uses: actions/checkout@v4
+    
+    - name: Установка Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+        cache: 'pip'
+    
+    - name: Установка зависимостей
+      run: |
+        pip install --upgrade pip
+        pip install jupyter-book
+        pip install -r requirements-dev.txt || true
+    
+    - name: Сборка книги
+      run: |
+        jupyter-book build .
+    
+    - name: Публикация на GitHub Pages
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./_build/html
+        force_orphan: true
+        user_name: 'github-actions[bot]'
+        user_email: 'github-actions[bot]@users.noreply.github.com'
+        commit_message: 'Обновление русской версии книги'

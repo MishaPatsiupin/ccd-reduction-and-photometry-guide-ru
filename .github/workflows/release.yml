@@ -1,0 +1,95 @@
+name: Создание релиза
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Версия релиза (например, v1.0.0)'
+        required: true
+        default: 'v1.0.0'
+
+jobs:
+  create-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    
+    steps:
+    - name: Checkout репозитория
+      uses: actions/checkout@v4
+    
+    - name: Установка Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+    
+    - name: Установка зависимостей
+      run: |
+        pip install --upgrade pip
+        pip install jupyter-book
+    
+    - name: Сборка книги
+      run: |
+        jupyter-book build .
+    
+    - name: Создание архива
+      run: |
+        cd _build/html
+        zip -r ../../ccd-guide-russian-html.zip .
+        cd ../..
+        tar -czf ccd-guide-russian-html.tar.gz -C _build/html .
+    
+    - name: Получение версии
+      id: get_version
+      run: |
+        if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+          echo "VERSION=${{ github.event.inputs.version }}" >> $GITHUB_OUTPUT
+        else
+          echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+        fi
+    
+    - name: Создание релиза
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: ${{ steps.get_version.outputs.VERSION }}
+        name: 'Русская версия руководства по обработке CCD данных ${{ steps.get_version.outputs.VERSION }}'
+        body: |
+          # 📚 Руководство по обработке CCD данных (русская версия)
+          
+          ## Что нового в этой версии
+          - ✅ Полный перевод всех 30 ноутбуков на русский язык
+          - ✅ Сохранены все технические термины (bias, dark, flat, CCD, gain, ADU, WCS и др.)
+          - ✅ Переведены конфигурационные файлы (_config.yml, _toc.yml)
+          - ✅ Обновлён README.md
+          
+          ## Скачать
+          - **HTML версия (ZIP)**: `ccd-guide-russian-html.zip`
+          - **HTML версия (TAR.GZ)**: `ccd-guide-russian-html.tar.gz`
+          
+          ## Онлайн версия
+          Доступна на GitHub Pages: https://${{ github.repository_owner }}.github.io/ccd-reduction-and-photometry-guide-ru/
+          
+          ## Оригинальный репозиторий
+          https://github.com/astropy/ccd-reduction-and-photometry-guide
+          
+          ---
+          
+          ### Структура перевода
+          - 📖 Предисловие и введение
+          - 🔭 Понимание астрономических CCD изображений (9 ноутбуков)
+          - ⚫ Обработка bias изображений (3 ноутбука)
+          - 🌑 Dark current и горячие пиксели (5 ноутбуков)
+          - 📊 Flat коррекции (4 ноутбука)
+          - 🌟 Редукция научных изображений (2 ноутбука)
+          - 🔗 Комбинирование изображений (4 ноутбука)
+          - 🎭 Маскирование изображений (4 ноутбука)
+        files: |
+          ccd-guide-russian-html.zip
+          ccd-guide-russian-html.tar.gz
+        draft: false
+        prerelease: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
