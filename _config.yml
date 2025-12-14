@@ -91,7 +91,7 @@ launch_buttons:
   colab_url                 : "" # The URL of Google Colab (https://colab.research.google.com)
 
 repository:
-  url                       : https://github.com/astropy/ccd-reduction-and-photometry-guide  # The URL to your book's repository
+  url                       : https://github.com/MishaPatsiupin/ccd-reduction-and-photometry-guide-ru  # The URL to your book's repository
   path_to_book              : "notebooks"  # A path to your book's folder, relative to the repository root.
   branch                    : main  # Which branch of the repository should be used when creating links
 

@@ -14,6 +14,8 @@ on:
                                          # not mean zero or more of previous
                                          # character.
       - '[0-9]+.[0-9]+.[0-9]+'  # actual releases.
+      - 'v[0-9]+.[0-9]+.[0-9]+'  # version tags with v prefix (e.g., v0.3.7)
+      - 'v[0-9]+.[0-9]+.[0-9]+[a-z0-9]*'  # version tags with v prefix and pre-release
   pull_request:
     branches: # only build on PRs against 'main'
        - main
