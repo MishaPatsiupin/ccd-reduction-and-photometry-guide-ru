@@ -27,7 +27,7 @@ check() {
 
 # Функция для проверки YAML синтаксиса
 check_yaml() {
-    python3 -c "import yaml; yaml.safe_load(open('$1'))" 2>/dev/null
+    python3 -c "import yaml; yaml.safe_load(open('$1', 'r'))" 2>/dev/null
     check $? "$1 имеет корректный YAML синтаксис" || ((errors++))
 }
 
