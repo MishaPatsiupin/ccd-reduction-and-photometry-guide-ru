@@ -1,7 +1,9 @@
 #!/bin/bash
 
 # Скрипт для проверки настройки GitHub Actions workflows
-# Note: We don't use 'set -e' because we intentionally check for errors
+# Note: We intentionally don't use 'set -e' because we need to check for errors
+# and continue execution to report all issues, not just the first one.
+# Error counting is handled manually via the 'errors' variable.
 
 echo "=========================================="
 echo "Проверка конфигурации GitHub Actions"
