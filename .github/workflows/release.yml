@@ -33,7 +33,7 @@ jobs:
     
     - name: Сборка книги
       run: |
-        jupyter-book build --all .
+        jupyter-book build --all .  --path-output . 
     
     - name: Создание архива
       run: |
