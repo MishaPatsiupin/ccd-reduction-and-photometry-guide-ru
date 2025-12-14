@@ -31,9 +31,21 @@ jobs:
         pip install --upgrade pip
         pip install jupyter-book
     
+    - name: Проверка структуры перед сборкой
+    run: |
+      echo "Содержимое текущей директории:"
+      ls -la
+      echo "Содержимое папки notebooks:"
+      ls -la notebooks/
+    
     - name: Сборка книги
       run: |
-        jupyter-book build --all .
+        jupyter-book build --all notebooks
+
+    - name: Проверка структуры после сборки
+    run: |
+      echo "Содержимое notebooks/_build:"
+      ls -la notebooks/_build || echo "Директория не создана!"
     
     - name: Создание архива
       run: |
