@@ -33,7 +33,7 @@ jobs:
     
     - name: Сборка книги
       run: |
-        jupyter-book build .
+        jupyter-book build --all .
     
     - name: Создание архива
       run: |
