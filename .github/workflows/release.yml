@@ -32,11 +32,11 @@ jobs:
         pip install jupyter-book
     
     - name: Проверка структуры перед сборкой
-    run: |
-      echo "Содержимое текущей директории:"
-      ls -la
-      echo "Содержимое папки notebooks:"
-      ls -la notebooks/
+      run: |
+        echo "Содержимое текущей директории:"
+        ls -la
+        echo "Содержимое папки notebooks:"
+        ls -la notebooks/
     
     - name: Сборка книги
       run: |
