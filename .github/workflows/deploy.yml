@@ -1,12 +1,6 @@
-name: Сборка и публикация Jupyter Book
+name: Сборка и публикация Jupyter Book (ручной запуск)
 
 on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
   workflow_dispatch:
 
 jobs:
@@ -29,17 +23,16 @@ jobs:
       run: |
         pip install --upgrade pip
         pip install jupyter-book
-        pip install -r requirements-dev.txt || true
+        pip install -r requirements.txt
     
     - name: Сборка книги
       run: |
-        cd ccd-reduction-and-photometry-guide || true
-        jupyter-book build --all notebooks
+        export GUIDE_RANDOM_SEED=4920385
+        jupyter-book build --all .
     
     - name: Публикация на GitHub Pages
-      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-      uses: peaceiris/actions-gh-pages@v3
+      uses: peaceiris/actions-gh-pages@v4
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: ./_build/html
-        force_orphan: true
+        destination_dir: manual-deploy

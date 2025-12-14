@@ -25,34 +25,39 @@ jobs:
       uses: actions/setup-python@v5
       with:
         python-version: '3.11'
+        cache: 'pip'
     
     - name: Установка зависимостей
       run: |
         pip install --upgrade pip
         pip install jupyter-book
+        pip install -r requirements.txt
     
     - name: Проверка структуры перед сборкой
       run: |
         echo "Содержимое текущей директории:"
         ls -la
         echo "Содержимое папки notebooks:"
-        ls -la notebooks/
+        ls -la notebooks/ | head -20
     
     - name: Сборка книги
       run: |
-        jupyter-book build --all notebooks
+        export GUIDE_RANDOM_SEED=4920385
+        jupyter-book build --all .
 
     - name: Проверка структуры после сборки
       run: |
-        echo "Содержимое notebooks/_build:"
-        ls -la notebooks/_build || echo "Директория не создана!"
+        echo "Содержимое _build:"
+        ls -la _build || echo "Директория не создана!"
+        echo "Содержимое _build/html:"
+        ls -la _build/html | head -20 || echo "HTML директория не создана!"
     
     - name: Создание архива
       run: |
-        cd notebooks/_build/html
-        zip -r ../../../ccd-guide-russian-html.zip .
-        cd ../../.. 
-        tar -czf ccd-guide-russian-html.tar.gz -C notebooks/_build/html .
+        cd _build/html
+        zip -r ../../ccd-guide-russian-html.zip .
+        cd ../.. 
+        tar -czf ccd-guide-russian-html.tar.gz -C _build/html .
     
     - name: Получение версии
       id: get_version
