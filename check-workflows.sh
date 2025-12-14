@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # Скрипт для проверки настройки GitHub Actions workflows
+# Note: We don't use 'set -e' because we intentionally check for errors
 
 echo "=========================================="
 echo "Проверка конфигурации GitHub Actions"
@@ -22,6 +23,12 @@ check() {
         echo -e "${RED}✗${NC} $2"
         return 1
     fi
+}
+
+# Функция для проверки YAML синтаксиса
+check_yaml() {
+    python3 -c "import yaml; yaml.safe_load(open('$1'))" 2>/dev/null
+    check $? "$1 имеет корректный YAML синтаксис" || ((errors++))
 }
 
 # Счётчик ошибок
@@ -60,15 +67,9 @@ check $? "Директория .github/workflows существует" || ((erro
 
 echo ""
 echo "5. Проверка YAML синтаксиса workflows..."
-python3 -c "import yaml; yaml.safe_load(open('.github/workflows/ci_tests.yml'))" 2>/dev/null
-check $? "ci_tests.yml имеет корректный YAML синтаксис" || ((errors++))
-
-python3 -c "import yaml; yaml.safe_load(open('.github/workflows/deploy.yml'))" 2>/dev/null
-check $? "deploy.yml имеет корректный YAML синтаксис" || ((errors++))
-
-python3 -c "import yaml; yaml.safe_load(open('.github/workflows/release.yml'))" 2>/dev/null
-check $? "release.yml имеет корректный YAML синтаксис" || ((errors++))
-
+check_yaml ".github/workflows/ci_tests.yml"
+check_yaml ".github/workflows/deploy.yml"
+check_yaml ".github/workflows/release.yml"
 echo ""
 echo "6. Проверка _config.yml..."
 grep -q "MishaPatsiupin/ccd-reduction-and-photometry-guide-ru" _config.yml

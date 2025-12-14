@@ -38,7 +38,7 @@ jobs:
         echo "Содержимое текущей директории:"
         ls -la
         echo "Содержимое папки notebooks:"
-        ls -la notebooks/ | head -20
+        ls -la notebooks/ || echo "Директория notebooks не найдена!"
     
     - name: Сборка книги
       run: |
@@ -48,9 +48,9 @@ jobs:
     - name: Проверка структуры после сборки
       run: |
         echo "Содержимое _build:"
-        ls -la _build || echo "Директория не создана!"
+        ls -la _build || echo "Директория _build не создана!"
         echo "Содержимое _build/html:"
-        ls -la _build/html | head -20 || echo "HTML директория не создана!"
+        ls -la _build/html || echo "HTML директория не создана!"
     
     - name: Создание архива
       run: |
