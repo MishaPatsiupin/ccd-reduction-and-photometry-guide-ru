@@ -1,0 +1,897 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>1.6. Overscan &#8212; Руководство по обработке CCD данных</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" href="../_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/design-style.b7bb847fb20b106c3d81b95245e65545.min.css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../_static/sphinx-thebe.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.1/dist/embed-amd.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="1.7. Выбор калибровки, который вам нужно сделать" href="01-09-Calibration-choices-you-need-to-make.html" />
+    <link rel="prev" title="1.5. Комбинирование изображений" href="01-06-Image-combination.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="../index.html">
+      
+        <!-- `logo` is deprecated in Sphinx 4.0, so remove this when we stop supporting 3 -->
+        
+      
+      
+      <img src="../_static/logo.png" class="logo" alt="logo">
+      
+      
+      <h1 class="site-logo" id="site-title">Руководство по обработке CCD данных</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="00-00-Preface.html">
+                    Предисловие
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+ <li class="toctree-l1 current active has-children">
+  <a class="reference internal" href="01-00-Understanding-an-astronomical-CCD-image.html">
+   1. Астрономические изображения
+  </a>
+  <input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
+  <label for="toctree-checkbox-1">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul class="current">
+   <li class="toctree-l2">
+    <a class="reference internal" href="01-01-astronomical-CCD-image-components.html">
+     1.1. Компоненты астрономических изображений
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="01-03-Construction-of-an-artificial-but-realistic-image.html">
+     1.2. Искусственное, но реалистичное изображение
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="01-04-Nonuniform-sensitivity.html">
+     1.3. Неравномерная чувствительность астрономических детекторов
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="01-05-Calibration-overview.html">
+     1.4. Обзор калибровки
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="01-06-Image-combination.html">
+     1.5. Комбинирование изображений
+    </a>
+   </li>
+   <li class="toctree-l2 current active">
+    <a class="current reference internal" href="#">
+     1.6. Зона overscan
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="01-09-Calibration-choices-you-need-to-make.html">
+     1.7. Выбор параметров калибровки
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="01-11-reading-images.html">
+     1.8. Чтение изображений
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="02-00-Handling-overscan-trimming-and-bias-subtraction.html">
+   2. Overscan и bias изображения
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
+  <label for="toctree-checkbox-2">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="02-01-overscan-trimming-and-bias-subtraction-background.html">
+     2.1. О bias и overscan
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="02-02-Calibrating-bias-images.html">
+     2.2. Калибровка bias изображений
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="02-04-Combine-bias-images-to-make-master.html">
+     2.3. Объединение bias изображений для создания мастер-bias
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="03-00-Dark-current-and-hot-pixels.html">
+   3. Тёмновой ток и кадры темновых снимков
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
+  <label for="toctree-checkbox-3">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="03-01-Dark-current-The-ideal-case.html">
+     3.1. Тёмновой ток: идеальный случай
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="03-02-Real-dark-current-noise-and-other-artifacts.html">
+     3.2. Реальный тёмновой ток: шум и другие артефакты
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="03-04-Handling-overscan-and-bias-for-dark-frames.html">
+     3.3. Обработка overscan и bias для тёмновых кадров
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="03-05-Calibrate-dark-images.html">
+     3.4. Калибровка тёмновых изображений
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="03-06-Combine-darks-for-use-in-later-calibration-steps.html">
+     3.5. Объединение калиброванных тёмновых изображений для последующих шагов обработки
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="05-00-Flat-corrections.html">
+   4. Коррекция flat
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/>
+  <label for="toctree-checkbox-4">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="05-01-about-flat-corrections.html">
+     4.1. Калибровка flat кадров
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="05-03-Calibrating-the-flats.html">
+     4.2. Калибровка flat кадров
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="05-04-Combining-flats.html">
+     4.3. Объединение flat кадров
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="06-00-Reducing-science-images.html">
+   5. Калибровка научных изображений
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/>
+  <label for="toctree-checkbox-5">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="06-03-science-images-calibration-examples.html">
+     5.1. Два примера калибровки
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="08-00-Image-masking.html">
+   6. Поиск и обработка дефектных пикселей
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/>
+  <label for="toctree-checkbox-6">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="08-01-Identifying-hot-pixels.html">
+     6.1. Идентификация горячих пикселей
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="08-02-Creating-a-mask.html">
+     6.2. Идентификация дефектных пикселей с помощью ccdmask
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="08-03-Cosmic-ray-removal.html">
+     6.3. Удаление космических лучей
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="08-05-incorporating-masks-into-calibrated-science-images.html">
+     6.4. Включение масок в научные изображения
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+    </div>
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
+            
+            <div class="navbar_extra_footer">
+            <h2>Издание книги: dev</h2>
+<strong>Предыдущие издания</strong></br>
+<a href="../../../v/2.0.1/index.html">2.0.1</a></br>
+<a href="../../../v/2.0.0/index.html">2.0.0</a></br>
+<a href="../../../v/dev/index.html">dev (последняя)</a></br>
+Работает на <a href="https://jupyterbook.org">Jupyter Book</a> и
+<a href="https://astropy.org">Astropy</a>
+
+            </div>
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<div class="menu-dropdown menu-dropdown-launch-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Launch interactive content">
+      <i class="fas fa-rocket"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="https://mybinder.org/v2/gh/MishaPatsiupin/ccd-reduction-and-photometry-guide-ru/main?urlpath=lab/tree/notebooks/notebooks/01-08-Overscan.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Launch on Binder"
+>
+  
+
+<span class="headerbtn__icon-container">
+  
+    <img src="../_static/images/logo_binder.svg">
+  </span>
+<span class="headerbtn__text-container">Binder</span>
+</a>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+<div class="menu-dropdown menu-dropdown-repository-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Source repositories">
+      <i class="fab fa-github"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="https://github.com/MishaPatsiupin/ccd-reduction-and-photometry-guide-ru/issues/new?title=Issue%20on%20page%20%2Fnotebooks/01-08-Overscan.html&body=Your%20issue%20content%20here."
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Open an issue"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="headerbtn__text-container">open issue</span>
+</a>
+
+      </li>
+      
+      <li>
+        <a href="https://github.com/MishaPatsiupin/ccd-reduction-and-photometry-guide-ru/edit/main/notebooks/notebooks/01-08-Overscan.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Edit this page"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-pencil-alt"></i>
+  </span>
+<span class="headerbtn__text-container">suggest edit</span>
+</a>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+<div class="menu-dropdown menu-dropdown-download-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Download this page">
+      <i class="fas fa-download"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="../_sources/notebooks/01-08-Overscan.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Download source file"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="headerbtn__text-container">.ipynb</span>
+</a>
+
+      </li>
+      
+      <li>
+        
+<button onclick="printPdf(this)"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="left"
+title="Print to PDF"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="headerbtn__text-container">.pdf</span>
+</button>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+<label for="__page-toc"
+  class="headerbtn headerbtn-page-toc"
+  
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-list"></i>
+  </span>
+
+</label>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+    <div class="tocsection onthispage pt-5 pb-3">
+        <i class="fas fa-list"></i> Contents
+    </div>
+    <nav id="bd-toc-nav" aria-label="Page">
+        <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#large-format-camera-lfc-palomar">
+   1.6.1. Случай 1: Криогенно охлаждаемая Large Format Camera (LFC) в Palomar
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#id1">
+     1.6.1.1. Обсуждение примера 1
+    </a>
+    <ul class="nav section-nav flex-column">
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#id2">
+       1.6.1.1.1. Что происходит, если не использовать overscan?
+      </a>
+     </li>
+    </ul>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#id3">
+     1.6.1.2. Вывод для случая 1
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#apogee-aspen-cg16m">
+   1.6.2. Случай 2: Термоэлектрически охлаждаемая Apogee Aspen CG16M
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#id4">
+     1.6.2.1. Обсуждение примера 2
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#id5">
+     1.6.2.2. Вывод для случая 2
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+    </nav>
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1>Overscan</h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                        <div>
+                            <h2> Contents </h2>
+                        </div>
+                        <nav aria-label="Page">
+                            <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#large-format-camera-lfc-palomar">
+   1.6.1. Случай 1: Криогенно охлаждаемая Large Format Camera (LFC) в Palomar
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#id1">
+     1.6.1.1. Обсуждение примера 1
+    </a>
+    <ul class="nav section-nav flex-column">
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#id2">
+       1.6.1.1.1. Что происходит, если не использовать overscan?
+      </a>
+     </li>
+    </ul>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#id3">
+     1.6.1.2. Вывод для случая 1
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#apogee-aspen-cg16m">
+   1.6.2. Случай 2: Термоэлектрически охлаждаемая Apogee Aspen CG16M
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#id4">
+     1.6.2.1. Обсуждение примера 2
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#id5">
+     1.6.2.2. Вывод для случая 2
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            <main id="main-content" role="main">
+                
+              <div>
+                
+  <section class="tex2jax_ignore mathjax_ignore" id="overscan">
+<h1><span class="section-number">1.6. </span>Overscan<a class="headerlink" href="#overscan" title="Permalink to this headline">#</a></h1>
+<p>Область overscan CCD, если она присутствует, представляет собой часть чипа, которая закрыта. В зависимости от камеры это может быть полезным способом удаления небольших вариаций в уровне bias от кадра к кадру.</p>
+<p>Однако полезность overscan зависит от камеры. Рекомендуется изучить область overscan используемой камеры перед тем, как решить, следует ли включать ее в редукцию изображений.</p>
+<p>Одно важное замечание: <em>overscan всегда включает bias, read noise и dark current</em>. Пиксели overscan по-прежнему являются пикселями, и так же, как любой другой пиксель, включают dark current и подвержены read noise. Многие источники описывают overscan как коррекцию bias, но если dark current для камеры пренебрежимо мал, как это часто бывает для криогенно охлаждаемых камер, то overscan по сути является bias.</p>
+<p>Read noise в overscan уменьшается путем усреднения по области overscan. Это будет рассмотрено в более позднем ноутбуке; этот ноутбук сосредоточен на том, как выглядит overscan и как решить, использовать его или нет.</p>
+<p>В этом ноутбуке мы рассмотрим область overscan для двух разных камер: криогенно охлаждаемой камеры, в которой overscan предоставляет полезную информацию, и термоэлектрически охлаждаемой камеры, в которой overscan не предоставляет полезной информации.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy.nddata</span><span class="w"> </span><span class="kn">import</span> <span class="n">CCDData</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy.visualization</span><span class="w"> </span><span class="kn">import</span> <span class="n">hist</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ccdproc</span><span class="w"> </span><span class="kn">import</span> <span class="n">subtract_overscan</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">convenience_functions</span><span class="w"> </span><span class="kn">import</span> <span class="n">show_image</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Use custom style for larger fonts and figures</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s1">&#39;guide.mplstyle&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<section id="large-format-camera-lfc-palomar">
+<h2><span class="section-number">1.6.1. </span>Случай 1: Криогенно охлаждаемая Large Format Camera (LFC) в Palomar<a class="headerlink" href="#large-format-camera-lfc-palomar" title="Permalink to this headline">#</a></h2>
+<p>Изображения ниже взяты с чипа 0 LFC на телескопе Palomar 200-дюймов. Техническая информация о камере <a class="reference external" href="http://www.astro.caltech.edu/palomar/observer/200inchResources/lfcspecs.html">здесь</a>. Оказывается, что изображения на самом деле не 2048 × 4096; как видно ниже, изображения 2080 × 4128. “Дополнительная” часть в каждом направлении — это overscan.</p>
+<p>Заголовок FITS для этих файлов включает ключевое слово <code class="docutils literal notranslate"><span class="pre">BIASSEC</span></code>, которое указывает номинальную область overscan. Его значение — <code class="docutils literal notranslate"><span class="pre">[2049:2080,1:4127]</span></code>, что указывает, что overscan простирается с 2048 по 2079 (индексация Python начинается с 0, а не с 1, как в FITS) в “коротком” направлении и по всему чипу в другом направлении. Как мы увидим вскоре, полезная область overscan меньше этой.</p>
+<p>Мы сосредоточимся здесь на overscan в стороне, которая номинально имеет ширину 2048; в Python это второй индекс. Показанные ниже сечения счета пикселей взяты из bias, научного и flat изображения. Flat изображения особенно полезны при оценке того, какая часть области overscan полезна, поскольку среднее значение пикселя в экспонированной части камеры обычно велико.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cryo_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s1">&#39;example-cryo-LFC&#39;</span><span class="p">)</span>
+<span class="n">bias_lfc</span> <span class="o">=</span> <span class="n">CCDData</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">cryo_path</span> <span class="o">/</span> <span class="s1">&#39;ccd.001.0.fits&#39;</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s1">&#39;count&#39;</span><span class="p">)</span>
+<span class="n">science_g_lfc</span> <span class="o">=</span> <span class="n">CCDData</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">cryo_path</span> <span class="o">/</span> <span class="s1">&#39;ccd.037.0.fits&#39;</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s1">&#39;count&#39;</span><span class="p">)</span>
+<span class="n">flat_g_lfc</span> <span class="o">=</span> <span class="n">CCDData</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">cryo_path</span> <span class="o">/</span> <span class="s1">&#39;ccd.014.0.fits&#39;</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s1">&#39;count&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>WARNING: FITSFixedWarning: &#39;datfix&#39; made the change &#39;Set MJD-OBS to 57402.000000 from DATE-OBS&#39;. [astropy.wcs.wcs]
+WARNING: FITSFixedWarning: &#39;datfix&#39; made the change &#39;Set MJD-OBS to 57403.000000 from DATE-OBS&#39;. [astropy.wcs.wcs]
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">bias_lfc</span><span class="o">.</span><span class="n">shape</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(4128, 2080)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span><span class="mi">10</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">science_g_lfc</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Science image&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">bias_lfc</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Bias image&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">flat_g_lfc</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Flat image&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mi">2048</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;dashed&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;start of overscan&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">2000</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="mi">2040</span><span class="p">,</span> <span class="mi">2090</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;pixel number&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Counts&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Overscan region, averaged over all rows&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0.5, 1.0, &#39;Overscan region, averaged over all rows&#39;)
+</pre></div>
+</div>
+<img alt="../_images/01-08-Overscan_7_1.png" src="../_images/01-08-Overscan_7_1.png" />
+</div>
+</div>
+<section id="id1">
+<h3><span class="section-number">1.6.1.1. </span>Обсуждение примера 1<a class="headerlink" href="#id1" title="Permalink to this headline">#</a></h3>
+<p>Есть несколько интересных вещей здесь.</p>
+<p><strong>Значение отсчетов почти однородно в области overscan.</strong></p>
+<p>Это хорошо; в идеале overscan почти однороден, поскольку пиксели не освещены.</p>
+<p><strong>Некоторое количество света просачивается из области изображения в область overscan.</strong></p>
+<p>Это наиболее очевидно в flat изображении, где отсчеты намного выше значения, к которому они асимптотически приближаются, по крайней мере до номера пикселя 2055.</p>
+<p>Хотя заголовок FITS указывает, что overscan начинается с пикселя 2048, <em>полезная</em> часть overscan (т.е. часть, не загрязненная светом) простирается с пикселя 2055 до конца.</p>
+<p><strong>Существует смещение между научным изображением и двумя другими изображениями, и, возможно, между flat и bias изображениями.</strong></p>
+<p>Такая вариация — это то, что overscan предназначен исправлять. Может быть так, что это одно научное изображение имеет другое значение overscan (оно было сделано несколько часов спустя после flat изображения), или может быть так, что все научные изображения имеют другое значение overscan, чем другие типы изображений.</p>
+<p>В любом случае вычитание overscan из каждого изображения позволяет корректировать эти смещения.</p>
+<p><strong>Dark current <em>в этой камере</em> по существу равен нулю, поэтому overscan измеряет bias.</strong></p>
+<p>Для ясности, это не очевидно из графика выше, но криогенно охлаждаемые камеры имеют пренебрежимо малый dark current.</p>
+<section id="id2">
+<h4><span class="section-number">1.6.1.1.1. </span>Что происходит, если не использовать overscan?<a class="headerlink" href="#id2" title="Permalink to this headline">#</a></h4>
+<p>Ничего особенно плохого. В конкретном случае выше игнорирование overscan сдвинет уровень фона в научном изображении примерно на 20 отсчетов, поскольку разница между областью overscan научного изображения ниже, чем overscan в других изображениях, примерно на 20 отсчетов. Если перед выполнением науки фон этих изображений вычитается, то это смещение должно быть удалено вместе с фоном.</p>
+</section>
+</section>
+<section id="id3">
+<h3><span class="section-number">1.6.1.2. </span>Вывод для случая 1<a class="headerlink" href="#id3" title="Permalink to this headline">#</a></h3>
+<p>Overscan полезен, но используемая область overscan простирается с 2055 до конца чипа, а не с 2048 до конца чипа, как утверждает заголовок FITS. Другими словами, подходящий <code class="docutils literal notranslate"><span class="pre">BIASSEC</span></code> для этих изображений — <code class="docutils literal notranslate"><span class="pre">[2056:2080,1:4127]</span></code>. (Обратите внимание, что FITS начинает нумерацию с 1 вместо 0, поэтому 2055 в Python — это 2056 в обозначении FITS.)</p>
+<p>Если наука, которую вы используете, требует знания отсчетов с точностью до одного или двух отсчетов, и моделирование фона в научном изображении не является опцией, рассмотрите возможность использования overscan.</p>
+</section>
+</section>
+<section id="apogee-aspen-cg16m">
+<h2><span class="section-number">1.6.2. </span>Случай 2: Термоэлектрически охлаждаемая Apogee Aspen CG16M<a class="headerlink" href="#apogee-aspen-cg16m" title="Permalink to this headline">#</a></h2>
+<p>Это низкоуровневый исследовательский CCD, продаваемый Andor. Основная информация <a class="reference external" href="https://andor.oxinst.com/assets/uploads/documents/Andor/apogee/Apogee_Aspen_CG16M_Specifications.pdf">здесь</a>, хотя вам нужно отследить описание сенсорного чипа, <a class="reference external" href="http://www.onsemi.com/pub/Collateral/KAF-16803-D.PDF">KAF-16803 CCD</a>, чтобы узнать, что область overscan этой камеры 4096 × 4096 пикселей простирается с пикселя 4097 по 4109 вдоль одного из направлений.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">therma_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s1">&#39;example-thermo-electric&#39;</span><span class="p">)</span>
+<span class="n">kelt</span> <span class="o">=</span> <span class="n">CCDData</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">therma_path</span> <span class="o">/</span> <span class="s1">&#39;kelt-16-b-S001-R001-C084-r.fit&#39;</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s1">&#39;adu&#39;</span><span class="p">)</span>
+<span class="n">dark1000</span> <span class="o">=</span> <span class="n">CCDData</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;dark-test-0002d1000.fit.bz2&#39;</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s1">&#39;adu&#39;</span><span class="p">)</span>
+<span class="n">flat</span> <span class="o">=</span> <span class="n">CCDData</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">therma_path</span> <span class="o">/</span> <span class="s1">&#39;AutoFlat-PANoRot-r-Bin1-006.fit&#39;</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s1">&#39;adu&#39;</span><span class="p">)</span>
+<span class="n">master</span> <span class="o">=</span> <span class="n">CCDData</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;combined_bias_100_images.fit.bz2&#39;</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s1">&#39;adu&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>INFO: using the unit adu passed to the FITS reader instead of the unit adu in the FITS file. [astropy.nddata.ccddata]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>WARNING: FITSFixedWarning: RADECSYS= &#39;FK5 &#39; / Equatorial coordinate system 
+the RADECSYS keyword is deprecated, use RADESYSa. [astropy.wcs.wcs]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>WARNING: FITSFixedWarning: &#39;datfix&#39; made the change &#39;Set MJD-OBS to 58269.980359 from DATE-OBS&#39;. [astropy.wcs.wcs]
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>INFO: using the unit adu passed to the FITS reader instead of the unit adu in the FITS file. [astropy.nddata.ccddata]
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>INFO: using the unit adu passed to the FITS reader instead of the unit adu in the FITS file. [astropy.nddata.ccddata]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>WARNING: FITSFixedWarning: &#39;datfix&#39; made the change &#39;Set MJD-OBS to 58269.954861 from DATE-OBS&#39;. [astropy.wcs.wcs]
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span><span class="mi">10</span><span class="p">))</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">kelt</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;night sky average&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">master</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;100 bias combined&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">dark1000</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;1000sec dark average&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">flat</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;flat average&#39;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mi">4096</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;dashed&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;start of overscan&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="mi">4090</span><span class="p">,</span> <span class="mi">4110</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="mi">900</span><span class="p">,</span> <span class="mi">1300</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(900.0, 1300.0)
+</pre></div>
+</div>
+<img alt="../_images/01-08-Overscan_12_1.png" src="../_images/01-08-Overscan_12_1.png" />
+</div>
+</div>
+<section id="id4">
+<h3><span class="section-number">1.6.2.1. </span>Обсуждение примера 2<a class="headerlink" href="#id4" title="Permalink to this headline">#</a></h3>
+<p>Камера также имеет некоторые интересные особенности.</p>
+<p><strong>Значения отсчетов значительно изменяются в области overscan</strong></p>
+<p>Это наиболее очевидно в overscan для flat. Не только свет просачивается в overscan, но overscan, по-видимому, в основном является утечкой света. Возможно, полезен только один пиксель в лучшем случае.</p>
+<p><strong>Overscan включает dark current</strong></p>
+<p>Overscan для dark изображения на рисунке выше примерно на 10 отсчетов выше, чем отсчеты для bias. Dark current для этой камеры составляет примерно 0.01 отсчет/пиксель/секунда. Для dark экспозиции в 1000 секунд ожидаемые dark отсчеты составляют около 10, что является разницей, видимой на графике.</p>
+<p><strong>Существует смещение между bias/dark и научными/flat изображениями</strong></p>
+<p>Смещение в этой камере составляет примерно 50 отсчетов. Оно достаточно велико, чтобы не следовало использовать overscan для этой камеры.</p>
+<p><strong>Отсчеты overscan выше, чем средние отсчеты bias</strong></p>
+<p>Обратите внимание, что для bias изображения отсчеты увеличиваются до пикселя, где начинается overscan, а затем выравниваются. Оказывается, что отсчеты overscan <em>выше</em>, чем среднее значение отсчетов bias, поэтому вычитание overscan приведет к bias изображению, которое будет отрицательным. Это еще одна причина быть подозрительным к области overscan в этой камере.</p>
+</section>
+<section id="id5">
+<h3><span class="section-number">1.6.2.2. </span>Вывод для случая 2<a class="headerlink" href="#id5" title="Permalink to this headline">#</a></h3>
+<p>Не используйте overscan в этом случае. Существуют серьезные проблемы с утечкой света и большими различиями в отсчетах overscan между bias и научными изображениями.</p>
+</section>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./notebooks"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+              </div>
+              
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+    <a class='left-prev' id="prev-link" href="01-06-Image-combination.html" title="previous page">
+        <i class="fas fa-angle-left"></i>
+        <div class="prev-next-info">
+            <p class="prev-next-subtitle">previous</p>
+            <p class="prev-next-title"><span class="section-number">1.5. </span>Комбинирование изображений</p>
+        </div>
+    </a>
+    <a class='right-next' id="next-link" href="01-09-Calibration-choices-you-need-to-make.html" title="next page">
+    <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title"><span class="section-number">1.7. </span>Выбор калибровки, который вам нужно сделать</p>
+    </div>
+    <i class="fas fa-angle-right"></i>
+    </a>
+</div>
+            </footer>
+        </div>
+    </div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+    By Matthew Craig<br/>
+  
+      &copy; Copyright 2020-2023.<br/>
+    <div class="extra_footer">
+      <p xmlns:cc="http://creativecommons.org/ns#" >Эта работа лицензирована под
+<a href="http://creativecommons.org/licenses/by/4.0/?ref=chooser-v1" target="_blank" rel="license noopener noreferrer" style="display:inline-block;">CC BY 4.0
+<img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/cc.svg?ref=chooser-v1">
+<img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/by.svg?ref=chooser-v1"></a></p>
+
+    </div>
+</p>
+        </footer>
+    </div>
+    
+</div>
+
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
+
+  </body>
+</html>

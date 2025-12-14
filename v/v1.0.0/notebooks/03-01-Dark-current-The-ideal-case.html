@@ -1,0 +1,1184 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>3.1. Темновой ток: идеальный случай &#8212; Руководство по обработке CCD данных</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" href="../_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/design-style.b7bb847fb20b106c3d81b95245e65545.min.css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../_static/sphinx-thebe.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.1/dist/embed-amd.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="3.2. Реальный dark current: шум и другие артефакты" href="03-02-Real-dark-current-noise-and-other-artifacts.html" />
+    <link rel="prev" title="3. Темновой ток и горячие пиксели" href="03-00-Dark-current-and-hot-pixels.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="../index.html">
+      
+        <!-- `logo` is deprecated in Sphinx 4.0, so remove this when we stop supporting 3 -->
+        
+      
+      
+      <img src="../_static/logo.png" class="logo" alt="logo">
+      
+      
+      <h1 class="site-logo" id="site-title">Руководство по обработке CCD данных</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="00-00-Preface.html">
+                    Предисловие
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="01-00-Understanding-an-astronomical-CCD-image.html">
+   1. Астрономические изображения
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
+  <label for="toctree-checkbox-1">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="01-01-astronomical-CCD-image-components.html">
+     1.1. Компоненты астрономических изображений
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="01-03-Construction-of-an-artificial-but-realistic-image.html">
+     1.2. Искусственное, но реалистичное изображение
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="01-04-Nonuniform-sensitivity.html">
+     1.3. Неравномерная чувствительность астрономических детекторов
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="01-05-Calibration-overview.html">
+     1.4. Обзор калибровки
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="01-06-Image-combination.html">
+     1.5. Комбинирование изображений
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="01-08-Overscan.html">
+     1.6. Зона overscan
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="01-09-Calibration-choices-you-need-to-make.html">
+     1.7. Выбор параметров калибровки
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="01-11-reading-images.html">
+     1.8. Чтение изображений
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="02-00-Handling-overscan-trimming-and-bias-subtraction.html">
+   2. Overscan и bias изображения
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
+  <label for="toctree-checkbox-2">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="02-01-overscan-trimming-and-bias-subtraction-background.html">
+     2.1. О bias и overscan
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="02-02-Calibrating-bias-images.html">
+     2.2. Калибровка bias изображений
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="02-04-Combine-bias-images-to-make-master.html">
+     2.3. Объединение bias изображений для создания мастер-bias
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 current active has-children">
+  <a class="reference internal" href="03-00-Dark-current-and-hot-pixels.html">
+   3. Тёмновой ток и кадры темновых снимков
+  </a>
+  <input checked="" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
+  <label for="toctree-checkbox-3">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul class="current">
+   <li class="toctree-l2 current active">
+    <a class="current reference internal" href="#">
+     3.1. Тёмновой ток: идеальный случай
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="03-02-Real-dark-current-noise-and-other-artifacts.html">
+     3.2. Реальный тёмновой ток: шум и другие артефакты
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="03-04-Handling-overscan-and-bias-for-dark-frames.html">
+     3.3. Обработка overscan и bias для тёмновых кадров
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="03-05-Calibrate-dark-images.html">
+     3.4. Калибровка тёмновых изображений
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="03-06-Combine-darks-for-use-in-later-calibration-steps.html">
+     3.5. Объединение калиброванных тёмновых изображений для последующих шагов обработки
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="05-00-Flat-corrections.html">
+   4. Коррекция flat
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/>
+  <label for="toctree-checkbox-4">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="05-01-about-flat-corrections.html">
+     4.1. Калибровка flat кадров
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="05-03-Calibrating-the-flats.html">
+     4.2. Калибровка flat кадров
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="05-04-Combining-flats.html">
+     4.3. Объединение flat кадров
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="06-00-Reducing-science-images.html">
+   5. Калибровка научных изображений
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/>
+  <label for="toctree-checkbox-5">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="06-03-science-images-calibration-examples.html">
+     5.1. Два примера калибровки
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="08-00-Image-masking.html">
+   6. Поиск и обработка дефектных пикселей
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/>
+  <label for="toctree-checkbox-6">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="08-01-Identifying-hot-pixels.html">
+     6.1. Идентификация горячих пикселей
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="08-02-Creating-a-mask.html">
+     6.2. Идентификация дефектных пикселей с помощью ccdmask
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="08-03-Cosmic-ray-removal.html">
+     6.3. Удаление космических лучей
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="08-05-incorporating-masks-into-calibrated-science-images.html">
+     6.4. Включение масок в научные изображения
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+    </div>
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
+            
+            <div class="navbar_extra_footer">
+            <h2>Издание книги: dev</h2>
+<strong>Предыдущие издания</strong></br>
+<a href="../../../v/2.0.1/index.html">2.0.1</a></br>
+<a href="../../../v/2.0.0/index.html">2.0.0</a></br>
+<a href="../../../v/dev/index.html">dev (последняя)</a></br>
+Работает на <a href="https://jupyterbook.org">Jupyter Book</a> и
+<a href="https://astropy.org">Astropy</a>
+
+            </div>
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<div class="menu-dropdown menu-dropdown-launch-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Launch interactive content">
+      <i class="fas fa-rocket"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="https://mybinder.org/v2/gh/MishaPatsiupin/ccd-reduction-and-photometry-guide-ru/main?urlpath=lab/tree/notebooks/notebooks/03-01-Dark-current-The-ideal-case.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Launch on Binder"
+>
+  
+
+<span class="headerbtn__icon-container">
+  
+    <img src="../_static/images/logo_binder.svg">
+  </span>
+<span class="headerbtn__text-container">Binder</span>
+</a>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+<div class="menu-dropdown menu-dropdown-repository-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Source repositories">
+      <i class="fab fa-github"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="https://github.com/MishaPatsiupin/ccd-reduction-and-photometry-guide-ru/issues/new?title=Issue%20on%20page%20%2Fnotebooks/03-01-Dark-current-The-ideal-case.html&body=Your%20issue%20content%20here."
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Open an issue"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="headerbtn__text-container">open issue</span>
+</a>
+
+      </li>
+      
+      <li>
+        <a href="https://github.com/MishaPatsiupin/ccd-reduction-and-photometry-guide-ru/edit/main/notebooks/notebooks/03-01-Dark-current-The-ideal-case.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Edit this page"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-pencil-alt"></i>
+  </span>
+<span class="headerbtn__text-container">suggest edit</span>
+</a>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+<div class="menu-dropdown menu-dropdown-download-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Download this page">
+      <i class="fas fa-download"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="../_sources/notebooks/03-01-Dark-current-The-ideal-case.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Download source file"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="headerbtn__text-container">.ipynb</span>
+</a>
+
+      </li>
+      
+      <li>
+        
+<button onclick="printPdf(this)"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="left"
+title="Print to PDF"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="headerbtn__text-container">.pdf</span>
+</button>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+<label for="__page-toc"
+  class="headerbtn headerbtn-page-toc"
+  
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-list"></i>
+  </span>
+
+</label>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+    <div class="tocsection onthispage pt-5 pb-3">
+        <i class="fas fa-list"></i> Contents
+    </div>
+    <nav id="bd-toc-nav" aria-label="Page">
+        <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#dark-frame">
+   3.1.1. Dark frame измеряет темновой ток
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#id2">
+     3.1.1.1. Вспомогательные функции
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#id3">
+   3.1.2. Теория темнового тока
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#id4">
+   3.1.3. Иллюстрация с только темновым током
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#id5">
+     3.1.3.1. Темновой ток — это случайный процесс
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#id6">
+     3.1.3.2. Темновые отсчеты следуют распределению Пуассона
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#id7">
+   3.1.4. Иллюстрация с темновым током и шумом считывания
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#id8">
+     3.1.4.1. Высокий шум
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#id9">
+     3.1.4.2. Низкий шум
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#id10">
+   3.1.5. Итоговые замечания
+  </a>
+ </li>
+</ul>
+
+    </nav>
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1>Темновой ток: идеальный случай</h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                        <div>
+                            <h2> Contents </h2>
+                        </div>
+                        <nav aria-label="Page">
+                            <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#dark-frame">
+   3.1.1. Dark frame измеряет темновой ток
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#id2">
+     3.1.1.1. Вспомогательные функции
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#id3">
+   3.1.2. Теория темнового тока
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#id4">
+   3.1.3. Иллюстрация с только темновым током
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#id5">
+     3.1.3.1. Темновой ток — это случайный процесс
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#id6">
+     3.1.3.2. Темновые отсчеты следуют распределению Пуассона
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#id7">
+   3.1.4. Иллюстрация с темновым током и шумом считывания
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#id8">
+     3.1.4.1. Высокий шум
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#id9">
+     3.1.4.2. Низкий шум
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#id10">
+   3.1.5. Итоговые замечания
+  </a>
+ </li>
+</ul>
+
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            <main id="main-content" role="main">
+                
+              <div>
+                
+  <section class="tex2jax_ignore mathjax_ignore" id="id1">
+<h1><span class="section-number">3.1. </span>Темновой ток: идеальный случай<a class="headerlink" href="#id1" title="Permalink to this headline">#</a></h1>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy</span><span class="w"> </span><span class="kn">import</span> <span class="n">stats</span>
+
+<span class="o">%</span><span class="k">matplotlib</span> inline
+<span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">image_sim</span><span class="w"> </span><span class="kn">import</span> <span class="n">dark_current</span><span class="p">,</span> <span class="n">read_noise</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Use custom style for larger fonts and figures</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s1">&#39;guide.mplstyle&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<section id="dark-frame">
+<h2><span class="section-number">3.1.1. </span>Dark frame измеряет темновой ток<a class="headerlink" href="#dark-frame" title="Permalink to this headline">#</a></h2>
+<p>Напомним, что <em>темновой ток</em> относится к отсчетам (электронам), генерируемым в пикселе
+из-за того, что электрон в пикселе имеет достаточно энергии, чтобы “освободиться”
+и зарегистрироваться как отсчет. Распределение тепловых энергий электронов в пикселе
+следует <a class="reference external" href="https://en.wikipedia.org/wiki/Maxwell%E2%80%93Boltzmann_distribution">распределению Максвелла-Больцмана</a>, в котором большинство электронов имеют энергию
+около <span class="math notranslate nohighlight">\(kT\)</span>, где <span class="math notranslate nohighlight">\(T\)</span> — температура сенсора, а <span class="math notranslate nohighlight">\(k\)</span> — постоянная Больцмана.
+Существует распределение энергий, и иногда
+электрон будет иметь достаточно высокую энергию, чтобы перейти в зону проводимости чипа,
+регистрируясь так же, как электрон, возбужденный фотоном. Поскольку
+распределение Максвелла-Больцмана зависит от температуры, скорость, с которой темновой
+ток появляется в пикселе, также ожидается зависящей от температуры.</p>
+<p><em>Dark frame</em> (также называемый <em>dark image</em>) — это изображение, сделанное вашей камерой
+с закрытым затвором. Это сумма уровня bias вашей камеры,
+шума считывания и темнового тока.</p>
+<p>Вы измеряете темновой ток в вашей камере, делая dark frames.</p>
+<section id="id2">
+<h3><span class="section-number">3.1.1.1. </span>Вспомогательные функции<a class="headerlink" href="#id2" title="Permalink to this headline">#</a></h3>
+<p>Пара функций, которые будут повторно использоваться несколько раз в этом notebook,
+определены ниже.</p>
+<p><strong>Функция для генерации dark frames</strong></p>
+<p>Эта функция генерирует набор dark frames. Она будет использоваться несколько раз
+ниже.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">generate_dark_frames</span><span class="p">(</span><span class="n">n_frames</span><span class="p">,</span> 
+                         <span class="n">dark_rate</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> 
+                         <span class="n">noise</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                         <span class="n">gain</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                         <span class="n">exposure</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+                         <span class="n">image_size</span><span class="o">=</span><span class="mi">500</span><span class="p">):</span>
+    
+    <span class="n">base_image</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="n">image_size</span><span class="p">,</span> <span class="n">image_size</span><span class="p">])</span>
+    <span class="n">darks</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="n">n_frames</span><span class="p">,</span> <span class="n">image_size</span><span class="p">,</span> <span class="n">image_size</span><span class="p">])</span>
+    
+    <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_images</span><span class="p">):</span>
+        <span class="n">darks</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="n">dark_current</span><span class="p">(</span><span class="n">base_image</span><span class="p">,</span> <span class="n">dark_rate</span><span class="p">,</span> <span class="n">exposure</span><span class="p">,</span> <span class="n">gain</span><span class="o">=</span><span class="n">gain</span><span class="p">,</span> <span class="n">hot_pixels</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">noise</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">darks</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="n">darks</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">+</span> <span class="n">read_noise</span><span class="p">(</span><span class="n">base_image</span><span class="p">,</span> <span class="n">noise</span><span class="p">,</span> <span class="n">gain</span><span class="o">=</span><span class="n">gain</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">darks</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p><strong>Функция для построения распределения темновых отсчетов</strong></p>
+<p>Функция ниже строит:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">plot_dark_with_distributions</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">rn</span><span class="p">,</span> <span class="n">dark_rate</span><span class="p">,</span> 
+                                 <span class="n">n_images</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                                 <span class="n">exposure</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                                 <span class="n">gain</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                                 <span class="n">show_poisson</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> 
+                                 <span class="n">show_gaussian</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Plot the distribution of dark pixel values, optionally overplotting the expected Poisson and</span>
+<span class="sd">    normal distributions corresponding to dark current only or read noise only.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    </span>
+<span class="sd">    image : numpy array</span>
+<span class="sd">        Dark frame to histogram.</span>
+<span class="sd">    </span>
+<span class="sd">    rn : float</span>
+<span class="sd">        The read noise, in electrons.</span>
+<span class="sd">        </span>
+<span class="sd">    dark_rate : float</span>
+<span class="sd">        The dark current in electrons/sec/pixel.</span>
+<span class="sd">    </span>
+<span class="sd">    n_images : float, optional</span>
+<span class="sd">        If the image is formed from the average of some number of dark frames then </span>
+<span class="sd">        the resulting Poisson distribution depends on the number of images, as does the </span>
+<span class="sd">        expected standard deviation of the Gaussian.</span>
+<span class="sd">        </span>
+<span class="sd">    exposure : float</span>
+<span class="sd">        Exposure time, in seconds.</span>
+<span class="sd">        </span>
+<span class="sd">    gain : float, optional</span>
+<span class="sd">        Gain of the camera, in electron/ADU.</span>
+<span class="sd">        </span>
+<span class="sd">    show_poisson : bool, optional</span>
+<span class="sd">        If ``True``, overplot a Poisson distribution with mean equal to the expected dark</span>
+<span class="sd">        counts for the number of images.</span>
+<span class="sd">    </span>
+<span class="sd">    show_gaussian : bool, optional</span>
+<span class="sd">        If ``True``, overplot a normal distribution with mean equal to the expected dark</span>
+<span class="sd">        counts and standard deviation equal to the read noise, scaled as appropiate for </span>
+<span class="sd">        the number of images.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="n">h</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="n">bins</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">align</span><span class="o">=</span><span class="s1">&#39;mid&#39;</span><span class="p">,</span> 
+                 <span class="n">density</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Dark frame&quot;</span><span class="p">);</span>
+
+    <span class="n">bins</span> <span class="o">=</span> <span class="n">h</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    
+    <span class="n">expected_mean_dark</span> <span class="o">=</span> <span class="n">dark_rate</span> <span class="o">*</span> <span class="n">exposure</span> <span class="o">/</span> <span class="n">gain</span>
+    
+    <span class="n">pois</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">poisson</span><span class="p">(</span><span class="n">expected_mean_dark</span> <span class="o">*</span> <span class="n">n_images</span><span class="p">)</span>
+
+    <span class="n">pois_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">300</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">new_area</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="n">n_images</span> <span class="o">*</span> <span class="n">pois</span><span class="o">.</span><span class="n">pmf</span><span class="p">(</span><span class="n">pois_x</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">show_poisson</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">pois_x</span> <span class="o">/</span> <span class="n">n_images</span><span class="p">,</span> <span class="n">pois</span><span class="o">.</span><span class="n">pmf</span><span class="p">(</span><span class="n">pois_x</span><span class="p">)</span> <span class="o">/</span> <span class="n">new_area</span><span class="p">,</span> 
+                 <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Poisson dsitribution, mean of </span><span class="si">{:5.2f}</span><span class="s2"> counts&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">expected_mean_dark</span><span class="p">))</span> 
+
+    <span class="k">if</span> <span class="n">show_gaussian</span><span class="p">:</span>
+        <span class="c1"># The expected width of the Gaussian depends on the number of images.</span>
+        <span class="n">expected_scale</span> <span class="o">=</span> <span class="n">rn</span> <span class="o">/</span> <span class="n">gain</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">n_images</span><span class="p">)</span>
+        
+        <span class="c1"># Mean value is same as for the Poisson distribution </span>
+        <span class="n">expected_mean</span> <span class="o">=</span> <span class="n">expected_mean_dark</span> <span class="o">*</span> <span class="n">n_images</span>
+        <span class="n">gauss</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="n">expected_mean</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">expected_scale</span><span class="p">)</span>
+        
+        <span class="n">gauss_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">expected_mean</span> <span class="o">-</span> <span class="mi">5</span> <span class="o">*</span> <span class="n">expected_scale</span><span class="p">,</span>
+                              <span class="n">expected_mean</span> <span class="o">+</span> <span class="mi">5</span> <span class="o">*</span> <span class="n">expected_scale</span><span class="p">,</span>
+                              <span class="n">num</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">gauss_x</span> <span class="o">/</span> <span class="n">n_images</span><span class="p">,</span> <span class="n">gauss</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">gauss_x</span><span class="p">)</span> <span class="o">*</span> <span class="n">n_images</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Gaussian, standard dev is read noise in counts&#39;</span><span class="p">)</span> 
+        
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Dark counts in </span><span class="si">{}</span><span class="s2"> sec exposure&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">exposure</span><span class="p">))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Fraction of pixels (area normalized to 1)&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="id3">
+<h2><span class="section-number">3.1.2. </span>Теория темнового тока<a class="headerlink" href="#id3" title="Permalink to this headline">#</a></h2>
+<p>Ожидаемый сигнал в экспозиции dark frame времени <span class="math notranslate nohighlight">\(t\)</span> пропорционален <span class="math notranslate nohighlight">\(t\)</span>.
+Если мы назовем темновые электроны в экспозиции <span class="math notranslate nohighlight">\(d_e(t)\)</span> и темновой ток
+<span class="math notranslate nohighlight">\(d_c(T)\)</span>, где <span class="math notranslate nohighlight">\(T\)</span> — температура, то</p>
+<div class="math notranslate nohighlight">
+\[
+d_e(t) = d_c(T) t.
+\]</div>
+<p>Для камер с жидкостным охлаждением, особенно охлаждаемых жидким азотом,
+рабочая температура не меняется. Для термоэлектрически охлаждаемых камер вы можете
+установить желаемую рабочую температуру. В результате вы должны иметь
+возможность игнорировать температурную зависимость темнового тока.</p>
+<p>Термоэлектрические охладители обычно могут охлаждать на некоторую фиксированную величину ниже
+температуры окружающей среды. Хотя в принципе вы можете выбрать всегда охлаждать на
+одну и ту же фиксированную величину, например, на <span class="math notranslate nohighlight">\(50^\circ\)</span>C ниже температуры окружающей среды, есть
+преимущество в том, чтобы всегда запускать вашу камеру при одной и той же температуре: dark frames,
+сделанные в одну дату, потенциально полезны в другую дату. Если рабочая
+температура меняется, то вам нужно убедиться, что вы делаете dark frames каждый раз, когда
+наблюдаете, если только вы не тщательно охарактеризовали температурную зависимость вашего
+темнового тока.</p>
+<p>Оказывается, что по практическим причинам — не все пиксели в вашей камере
+имеют одинаковый темновой ток — обычно лучше делать dark frames каждый раз,
+когда вы наблюдаете в любом случае.</p>
+</section>
+<section id="id4">
+<h2><span class="section-number">3.1.3. </span>Иллюстрация с только темновым током<a class="headerlink" href="#id4" title="Permalink to this headline">#</a></h2>
+<p>Для целей иллюстрации некоторых свойств темнового тока и dark
+frames мы сгенерируем несколько смоделированных изображений, в которых отсчеты обусловлены только
+темновым током. Мы будем использовать эти значения:</p>
+<ul class="simple">
+<li><p>Темновой ток <span class="math notranslate nohighlight">\(d_c(T) = 0.1 e^-\)</span>/pixel/sec</p></li>
+<li><p>Gain <span class="math notranslate nohighlight">\(g = 1.5 e^-\)</span>/ADU</p></li>
+<li><p>Шум считывания 0 <span class="math notranslate nohighlight">\(e^-\)</span></p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dark_rate</span> <span class="o">=</span> <span class="mf">0.1</span>
+<span class="n">gain</span> <span class="o">=</span> <span class="mf">1.5</span>
+<span class="n">read_noise_electrons</span> <span class="o">=</span> <span class="mi">0</span>
+</pre></div>
+</div>
+</div>
+</div>
+<section id="id5">
+<h3><span class="section-number">3.1.3.1. </span>Темновой ток — это случайный процесс<a class="headerlink" href="#id5" title="Permalink to this headline">#</a></h3>
+<p>Темновые отсчеты в dark frame являются отсчетами и поэтому следуют распределению
+Пуассона. График ниже показывает темновой ток в нескольких случайно
+выбранных пикселях в 20 различных смоделированных изображениях, каждое с временем экспозиции 100 сек.
+Обратите внимание, что отсчеты варьируются от изображения к изображению, но среднее значение очень близко
+к ожидаемому значению.</p>
+<p>Ожидаемое значение темновых отсчетов для этого изображения составляет <span class="math notranslate nohighlight">\(d_e(t)/g =
+6.67~\)</span>counts.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">exposure</span> <span class="o">=</span> <span class="mi">100</span>
+
+<span class="n">n_images</span> <span class="o">=</span> <span class="mi">20</span>
+<span class="n">n_pixels</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">image_size</span> <span class="o">=</span> <span class="mi">500</span>
+
+
+
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+
+<span class="n">darks</span> <span class="o">=</span> <span class="n">generate_dark_frames</span><span class="p">(</span><span class="n">n_images</span><span class="p">,</span> <span class="n">dark_rate</span><span class="o">=</span><span class="n">dark_rate</span><span class="p">,</span> <span class="n">noise</span><span class="o">=</span><span class="n">read_noise_electrons</span><span class="p">,</span>
+                             <span class="n">gain</span><span class="o">=</span><span class="n">gain</span><span class="p">,</span> <span class="n">exposure</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">image_size</span><span class="o">=</span><span class="n">image_size</span><span class="p">)</span>
+
+
+<span class="c1"># Pick several random pixels to plot</span>
+<span class="n">pixels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mi">190</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">n_pixels</span><span class="p">)</span>
+<span class="n">pixel_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_images</span><span class="p">)</span>
+<span class="n">pixel_averages</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_images</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">pixel</span> <span class="ow">in</span> <span class="n">pixels</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_images</span><span class="p">):</span>
+        <span class="n">pixel_values</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="n">darks</span><span class="p">[</span><span class="n">n</span><span class="p">,</span> <span class="n">pixel</span><span class="p">,</span> <span class="n">pixel</span><span class="p">]</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">pixel_values</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;pixel [</span><span class="si">{0}</span><span class="s1">, </span><span class="si">{0}</span><span class="s1">]&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pixel</span><span class="p">),</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+    <span class="n">pixel_averages</span> <span class="o">+=</span> <span class="n">pixel_values</span>
+
+
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">pixel_averages</span> <span class="o">/</span> <span class="n">n_pixels</span><span class="p">,</span> 
+         <span class="n">linewidth</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+         <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Average over </span><span class="si">{}</span><span class="s1"> pixels&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">n_pixels</span><span class="p">))</span>
+<span class="c1"># plt.xlim(0, n_images - 1)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">hlines</span><span class="p">(</span><span class="n">dark_rate</span> <span class="o">*</span> <span class="n">exposure</span> <span class="o">/</span> <span class="n">gain</span><span class="p">,</span> <span class="o">*</span><span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(),</span> 
+           <span class="n">linewidth</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> 
+           <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Expected counts&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Image number&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Counts due to dark current&#39;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/03-01-Dark-current-The-ideal-case_13_0.png" src="../_images/03-01-Dark-current-The-ideal-case_13_0.png" />
+</div>
+</div>
+</section>
+<section id="id6">
+<h3><span class="section-number">3.1.3.2. </span>Темновые отсчеты следуют распределению Пуассона<a class="headerlink" href="#id6" title="Permalink to this headline">#</a></h3>
+<p>Распределение ниже показывает нормализованную гистограмму количества пикселей как
+функцию темновых отсчетов в каждом пикселе для одного из смоделированных dark frames.
+Поверх гистограммы наложено распределение Пуассона со средним <span class="math notranslate nohighlight">\(d_e(t_{exp})
+= d_C(T) * t_{exp} / g\)</span>, где <span class="math notranslate nohighlight">\(t_{exp}\)</span> — время экспозиции.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+
+
+<span class="n">h</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">darks</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="n">bins</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">align</span><span class="o">=</span><span class="s1">&#39;mid&#39;</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> 
+             <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Histogram of dark current counts in single image&quot;</span><span class="p">);</span>
+<span class="n">bins</span> <span class="o">=</span> <span class="n">h</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">pois</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">poisson</span><span class="p">(</span><span class="n">dark_rate</span> <span class="o">*</span> <span class="n">exposure</span> <span class="o">/</span> <span class="n">gain</span><span class="p">)</span>
+<span class="n">pois_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">pois_x</span><span class="p">,</span> <span class="n">pois</span><span class="o">.</span><span class="n">pmf</span><span class="p">(</span><span class="n">pois_x</span><span class="p">),</span> 
+         <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Poisson dsitribution, mean of </span><span class="si">{:5.2f}</span><span class="s2"> counts&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dark_rate</span> <span class="o">*</span> <span class="n">exposure</span> <span class="o">/</span> <span class="n">gain</span><span class="p">))</span>  
+
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Dark counts in </span><span class="si">{}</span><span class="s2"> exposure&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">exposure</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Number of pixels (area normalized to 1)&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/03-01-Dark-current-The-ideal-case_15_0.png" src="../_images/03-01-Dark-current-The-ideal-case_15_0.png" />
+</div>
+</div>
+</section>
+</section>
+<section id="id7">
+<h2><span class="section-number">3.1.4. </span>Иллюстрация с темновым током и шумом считывания<a class="headerlink" href="#id7" title="Permalink to this headline">#</a></h2>
+<p>Теперь давайте пройдемся по той же паре графиков с ненулевым шумом считывания. Для
+целей иллюстрации мы рассмотрим два случая:</p>
+<ol class="simple">
+<li><p>Умеренный шум считывания 10 <span class="math notranslate nohighlight">\(e^-\)</span> на считывание, типичный для исследовательской CCD низкого уровня</p></li>
+<li><p>Низкий шум считывания 1 <span class="math notranslate nohighlight">\(e^-\)</span> на считывание</p></li>
+</ol>
+<p>В обоих случаях мы продолжим с параметрами выше для генерации наших кадров:</p>
+<ul class="simple">
+<li><p>Темновой ток <span class="math notranslate nohighlight">\(d_c(T) = 0.1 e^-\)</span>/pixel/sec</p></li>
+<li><p>Gain <span class="math notranslate nohighlight">\(g = 1.5 e^-\)</span>/ADU</p></li>
+<li><p>Время экспозиции 100 сек</p></li>
+</ul>
+<p>С этими выборами ожидаемый темновой отсчет составляет 6.67 count, что составляет 10 <span class="math notranslate nohighlight">\(e^-\)</span>.
+То есть, не случайно, одно из значений для шума считывания, которое было выбрано.</p>
+<p>Скорость темнового тока в этом примере несколько выше, чем у реального
+CCD. Большой темновой ток используется здесь для демонстрации взаимодействия темнового
+тока и шума считывания, и время экспозиции было выбрано так, что ожидаемые темновые
+электроны составляют 10<span class="math notranslate nohighlight">\(e-\)</span>.</p>
+<section id="id8">
+<h3><span class="section-number">3.1.4.1. </span>Высокий шум<a class="headerlink" href="#id8" title="Permalink to this headline">#</a></h3>
+<p>В этом первом случае шум считывания и темновой ток оба составляют 10<span class="math notranslate nohighlight">\(e^-\)</span>. Как мы
+увидим вскоре, dark frame на самом деле измеряет шум считывания, а не темновой ток,
+при этих обстоятельствах.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">high_read_noise</span> <span class="o">=</span> <span class="mi">10</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">darks</span> <span class="o">=</span> <span class="n">generate_dark_frames</span><span class="p">(</span><span class="n">n_images</span><span class="p">,</span> <span class="n">dark_rate</span><span class="o">=</span><span class="n">dark_rate</span><span class="p">,</span> <span class="n">noise</span><span class="o">=</span><span class="n">high_read_noise</span><span class="p">,</span> 
+                             <span class="n">gain</span><span class="o">=</span><span class="n">gain</span><span class="p">,</span> <span class="n">exposure</span><span class="o">=</span><span class="n">exposure</span><span class="p">,</span> <span class="n">image_size</span><span class="o">=</span><span class="n">image_size</span><span class="p">)</span>
+
+<span class="n">image_average</span> <span class="o">=</span> <span class="n">darks</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+
+<span class="n">plot_dark_with_distributions</span><span class="p">(</span><span class="n">darks</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">high_read_noise</span><span class="p">,</span> <span class="n">dark_rate</span><span class="p">,</span> 
+                             <span class="n">n_images</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">exposure</span><span class="o">=</span><span class="n">exposure</span><span class="p">,</span> <span class="n">gain</span><span class="o">=</span><span class="n">gain</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="o">-</span><span class="mi">20</span><span class="p">,</span> <span class="mi">30</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/03-01-Dark-current-The-ideal-case_20_0.png" src="../_images/03-01-Dark-current-The-ideal-case_20_0.png" />
+</div>
+</div>
+<p><strong>Этот dark frame измеряет шум, а не темновой ток</strong></p>
+<p>Распределение пикселей явно является распределением Гаусса с шириной,
+определяемой шумом считывания, а не базовым распределением Пуассона, которое
+dark frame пытается измерить. Единственный способ обойти это (предполагая, что темновой
+ток достаточно велик, чтобы его вообще нужно было вычитать) — сделать
+экспозицию достаточно длинной, чтобы ожидаемые отсчеты превышали темновой ток.</p>
+<p>Мы рассмотрим этот случай ниже, добавив гораздо меньшее количество шума.</p>
+<p><strong>Комбинирование не восстанавливает темновой ток</strong></p>
+<p>Графики ниже показывают результат усреднения нескольких (20 в данном случае) dark
+frames вместе. Мы могли бы надеяться, что усреднение уменьшает шум настолько, что
+распределение пикселей становится распределением Пуассона, ожидаемым для dark
+frame. Это не так.</p>
+<p><em>Примечание:</em> Для правильного расчета ожидаемого распределения отсчетов в
+среднем dark frames вы должны начать с ожиданий для <em>суммы</em>
+изображений, затем масштабировать отсчеты вниз на количество изображений, а
+распределение вверх на тот же коэффициент, чтобы распределение оставалось нормализованным.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+
+<span class="n">plot_dark_with_distributions</span><span class="p">(</span><span class="n">image_average</span><span class="p">,</span> <span class="n">high_read_noise</span><span class="p">,</span> <span class="n">dark_rate</span><span class="p">,</span> 
+                             <span class="n">n_images</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">exposure</span><span class="o">=</span><span class="n">exposure</span><span class="p">,</span> <span class="n">gain</span><span class="o">=</span><span class="n">gain</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Distribution of counts for the average of 20 dark images, high noise case&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/03-01-Dark-current-The-ideal-case_24_0.png" src="../_images/03-01-Dark-current-The-ideal-case_24_0.png" />
+</div>
+</div>
+<p>Даже комбинация 20 dark frames не приводит к распределению Пуассона;
+распределение все еще является распределением Гаусса, ширина которого определяется шумом считывания
+и количеством изображений.</p>
+</section>
+<section id="id9">
+<h3><span class="section-number">3.1.4.2. </span>Низкий шум<a class="headerlink" href="#id9" title="Permalink to this headline">#</a></h3>
+<p>В этом случае шум считывания составляет 1 <span class="math notranslate nohighlight">\(e^-\)</span>, ниже в десять раз, чем
+ожидаемый темновой ток для этого времени экспозиции, 10<span class="math notranslate nohighlight">\(e^-\)</span>.</p>
+<p>Этот случай почти никогда не встречается в реальных CCD, но он иллюстрирует, что при достаточно низком
+шуме считывания вы можете восстановить распределение Пуассона темнового тока.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">low_read_noise</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="n">darks</span> <span class="o">=</span> <span class="n">generate_dark_frames</span><span class="p">(</span><span class="n">n_images</span><span class="p">,</span> <span class="n">dark_rate</span><span class="o">=</span><span class="n">dark_rate</span><span class="p">,</span> <span class="n">noise</span><span class="o">=</span><span class="n">low_read_noise</span><span class="p">,</span> 
+                             <span class="n">gain</span><span class="o">=</span><span class="n">gain</span><span class="p">,</span> <span class="n">exposure</span><span class="o">=</span><span class="n">exposure</span><span class="p">,</span> <span class="n">image_size</span><span class="o">=</span><span class="n">image_size</span><span class="p">)</span>
+
+<span class="n">image_average</span> <span class="o">=</span> <span class="n">darks</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+
+
+<span class="n">plot_dark_with_distributions</span><span class="p">(</span><span class="n">darks</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">low_read_noise</span><span class="p">,</span> <span class="n">dark_rate</span><span class="p">,</span> 
+                             <span class="n">n_images</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">exposure</span><span class="o">=</span><span class="n">exposure</span><span class="p">,</span> <span class="n">gain</span><span class="o">=</span><span class="n">gain</span><span class="p">)</span>
+
+<span class="c1">#plt.ylim(0, 0.8)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Distribution of counts for the average of one dark images, low noise case&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/03-01-Dark-current-The-ideal-case_28_0.png" src="../_images/03-01-Dark-current-The-ideal-case_28_0.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+
+
+<span class="n">plot_dark_with_distributions</span><span class="p">(</span><span class="n">image_average</span><span class="p">,</span> <span class="n">low_read_noise</span><span class="p">,</span> <span class="n">dark_rate</span><span class="p">,</span> 
+                             <span class="n">n_images</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">exposure</span><span class="o">=</span><span class="n">exposure</span><span class="p">,</span> <span class="n">gain</span><span class="o">=</span><span class="n">gain</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">14</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Distribution of counts for the average of 20 dark images, low noise case&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/03-01-Dark-current-The-ideal-case_29_0.png" src="../_images/03-01-Dark-current-The-ideal-case_29_0.png" />
+</div>
+</div>
+</section>
+</section>
+<section id="id10">
+<h2><span class="section-number">3.1.5. </span>Итоговые замечания<a class="headerlink" href="#id10" title="Permalink to this headline">#</a></h2>
+<p>В идеальном случае темновые отсчеты следуют распределению Пуассона со средним значением, пропорциональным времени экспозиции. На практике шум считывания может доминировать над темновым током, особенно для коротких экспозиций. Комбинирование множественных dark frames не восстанавливает распределение Пуассона, если шум считывания сравним с темновым током.</p>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./notebooks"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+              </div>
+              
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+    <a class='left-prev' id="prev-link" href="03-00-Dark-current-and-hot-pixels.html" title="previous page">
+        <i class="fas fa-angle-left"></i>
+        <div class="prev-next-info">
+            <p class="prev-next-subtitle">previous</p>
+            <p class="prev-next-title"><span class="section-number">3. </span>Темновой ток и горячие пиксели</p>
+        </div>
+    </a>
+    <a class='right-next' id="next-link" href="03-02-Real-dark-current-noise-and-other-artifacts.html" title="next page">
+    <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title"><span class="section-number">3.2. </span>Реальный dark current: шум и другие артефакты</p>
+    </div>
+    <i class="fas fa-angle-right"></i>
+    </a>
+</div>
+            </footer>
+        </div>
+    </div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+    By Matthew Craig<br/>
+  
+      &copy; Copyright 2020-2023.<br/>
+    <div class="extra_footer">
+      <p xmlns:cc="http://creativecommons.org/ns#" >Эта работа лицензирована под
+<a href="http://creativecommons.org/licenses/by/4.0/?ref=chooser-v1" target="_blank" rel="license noopener noreferrer" style="display:inline-block;">CC BY 4.0
+<img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/cc.svg?ref=chooser-v1">
+<img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/by.svg?ref=chooser-v1"></a></p>
+
+    </div>
+</p>
+        </footer>
+    </div>
+    
+</div>
+
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
+
+  </body>
+</html>
