@@ -43,9 +43,9 @@ jobs:
         jupyter-book build --all notebooks
 
     - name: Проверка структуры после сборки
-    run: |
-      echo "Содержимое notebooks/_build:"
-      ls -la notebooks/_build || echo "Директория не создана!"
+      run: |
+        echo "Содержимое notebooks/_build:"
+        ls -la notebooks/_build || echo "Директория не создана!"
     
     - name: Создание архива
       run: |
