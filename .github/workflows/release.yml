@@ -33,14 +33,14 @@ jobs:
     
     - name: Сборка книги
       run: |
-        jupyter-book build --all .  --path-output . 
+        jupyter-book build --all .
     
     - name: Создание архива
       run: |
-        cd _build/html
-        zip -r ../../ccd-guide-russian-html.zip .
-        cd ../..
-        tar -czf ccd-guide-russian-html.tar.gz -C _build/html .
+        cd notebooks/_build/html
+        zip -r ../../../ccd-guide-russian-html.zip .
+        cd ../../.. 
+        tar -czf ccd-guide-russian-html.tar.gz -C notebooks/_build/html .
     
     - name: Получение версии
       id: get_version

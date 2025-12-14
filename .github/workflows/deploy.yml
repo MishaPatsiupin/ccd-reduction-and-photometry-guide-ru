@@ -34,7 +34,7 @@ jobs:
     - name: Сборка книги
       run: |
         cd ccd-reduction-and-photometry-guide || true
-        jupyter-book build --all .
+        jupyter-book build --all notebooks
     
     - name: Публикация на GitHub Pages
       if: github.event_name == 'push' && github.ref == 'refs/heads/main'
